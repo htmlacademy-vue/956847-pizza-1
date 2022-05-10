@@ -31,9 +31,9 @@
 
               <div class="sheet__content dough">
                 <label
-                  class="dough__input"
-                  :class="`dough__input--${doughName[i]}`"
                   v-for="(item, i) in dough"
+                  class="dough__input"
+                  :class="`dough__input--${doughNames[i].split('-')[1]}`"
                   :key="item.id"
                 >
                   <input
@@ -56,9 +56,9 @@
               <h2 class="title title--small sheet__title">Выберите размер</h2>
               <div class="sheet__content diameter">
                 <label
+                  v-for="(size, i) in diameter"
                   class="diameter__input"
                   :class="`diameter__input--${sizesNames[i]}`"
-                  v-for="(size, i) in diameter"
                   :key="size.id"
                 >
                   <input
@@ -84,8 +84,8 @@
                   <p>Основной соус:</p>
 
                   <label
-                    class="radio ingredients__input"
                     v-for="sauce in sauces"
+                    class="radio ingredients__input"
                     :key="sauce.id"
                   >
                     <input
@@ -104,16 +104,16 @@
 
                   <ul class="ingredients__list">
                     <li
-                      class="ingredients__item"
                       v-for="(item, i) in ingridients"
+                      class="ingredients__item"
                       :key="item.id"
                     >
                       <span
                         class="filling"
-                        :class="`filling--${ingridientsName[i]}`"
+                        :class="`filling--${ingridientsNames[i]}`"
                       >
-                        {{ item.name }}</span
-                      >
+                        {{ item.name }}
+                      </span>
                       <div class="counter counter--orange ingredients__counter">
                         <button
                           type="button"
@@ -182,7 +182,7 @@ import pizza from "@/static/pizza.json";
 import uzer from "@/static/user.json";
 
 export default {
-  name: "IndexHome",
+  name: "Index",
   data() {
     return {
       misc,
@@ -197,70 +197,70 @@ export default {
       diameter: pizza.sizes,
     };
   },
+  methods: {
+    extractImageName(url) {
+      let Result = [];
+      url.forEach((item) => {
+        let Image = item.image;
+        let Name = Image.split("/")[Image.split("/").length - 1].split(".")[0];
+        Result.push(Name);
+      });
+      return Result;
+    },
+  },
   computed: {
-    // eslint-disable-next-line vue/return-in-computed-property
-    ingridientsName() {
-      // eslint-disable-next-line no-unused-vars
-      let result = [];
-      this.ingridients.forEach((item) => {
-        let image = item.image;
-        let name = image.split("/")[image.split("/").length - 1].split(".")[0];
-        result.push(name);
-      });
-      return result;
+    ingridientsNames() {
+      return this.extractImageName(this.ingridients);
     },
-    doughName() {
-      // eslint-disable-next-line no-unused-vars
-      let result = [];
-      this.dough.forEach((item) => {
-        let image = item.image;
-        let name = image
-          .split("/")
-          [image.split("/").length - 1].split(".")[0]
-          .split("-")[1];
-        result.push(name);
-      });
-      return result;
+    doughNames() {
+      return this.extractImageName(this.dough);
     },
-    // eslint-disable-next-line vue/return-in-computed-property
     doughClasses() {
-      if (this.doughType === "Тонкое") {
-        return "small";
+      let SafekeepingDough = "";
+      switch (this.doughType) {
+        case "Тонкое":
+          SafekeepingDough = "small";
+          break;
+        case "Толстое":
+          SafekeepingDough = "big";
+          break;
       }
-      if (this.doughType === "Толстое") {
-        return "big";
-      }
+      return SafekeepingDough;
     },
-    // eslint-disable-next-line vue/return-in-computed-property
     saucesClasses() {
-      if (this.saucesType === "Томатный") {
-        return "tomato";
+      let SafekeepingSauce = "";
+      switch (this.saucesType) {
+        case "Томатный":
+          SafekeepingSauce = "tomato";
+          break;
+        case "Сливочный":
+          SafekeepingSauce = "creamy";
+          break;
       }
-      if (this.saucesType === "Сливочный") {
-        return "creamy";
-      }
+      return SafekeepingSauce;
     },
-    // eslint-disable-next-line vue/return-in-computed-property
     sizesNames() {
-      let arrSizes = [];
+      let ArrSizes = [];
       this.diameter.forEach((item) => {
-        let sizeID = item.id;
-        if (sizeID === 1) {
-          arrSizes.push("small");
-        } else if (sizeID === 2) {
-          arrSizes.push("normal");
-        } else if (sizeID === 3) {
-          arrSizes.push("big");
+        switch (item.id) {
+          case 1:
+            ArrSizes.push("small");
+            break;
+          case 2:
+            ArrSizes.push("normal");
+            break;
+          case 3:
+            ArrSizes.push("big");
+            break;
         }
       });
-      console.log(arrSizes);
-      return arrSizes;
+      return ArrSizes;
     },
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style>
 @import "~@/assets/scss/layout/main.scss";
 @import "~@/assets/scss/blocks/pizza.scss";
 @import "~@/assets/scss/blocks/user.scss";

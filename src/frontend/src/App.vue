@@ -1,17 +1,16 @@
 <template>
   <div id="app">
-    <AppLayout />
+    <Index />
   </div>
 </template>
 
 <script>
-import AppLayout from "@/layouts/AppLayout";
+import Index from "@/views/Index";
 
 export default {
   name: "App",
   components: {
-    // eslint-disable-next-line vue/no-unused-components
-    AppLayout,
+    Index,
   },
 };
 </script>
