@@ -13,7 +13,7 @@
         </a>
       </div>
       <div class="header__cart">
-        <!--      <a href="cart.html">0 ₽</a>-->
+        <!--      <a href="cart.html">1 ₽</a>-->
         <a href="#">0 ₽</a>
       </div>
       <div class="header__user">
@@ -56,10 +56,10 @@
               <h2 class="title title--small sheet__title">Выберите размер</h2>
               <div class="sheet__content diameter">
                 <label
-                  v-for="(size, i) in diameter"
+                  v-for="(size, i) in sizes"
                   class="diameter__input"
                   :class="`diameter__input--${sizesNames[i]}`"
-                  :key="size.id"
+                  :key="sizesNames[i]"
                 >
                   <input
                     type="radio"
@@ -155,7 +155,7 @@
             <div class="content__constructor">
               <div
                 class="pizza"
-                :class="`pizza--foundation--${doughClasses}-${saucesClasses}`"
+                :class="`pizza--foundation--${doughCssClass}-${sauceCssClass}`"
               >
                 <div class="pizza__wrapper">
                   <div class="pizza__filling pizza__filling--ananas"></div>
@@ -177,84 +177,77 @@
 </template>
 
 <script>
-import misc from "@/static/misc.json";
 import pizza from "@/static/pizza.json";
-import uzer from "@/static/user.json";
 
 export default {
   name: "Index",
   data() {
     return {
-      misc,
-      pizza,
-      uzer,
       ingridients: pizza.ingredients,
       dough: pizza.dough,
       pizzaImg: false,
       doughType: "Толстое",
       sauces: pizza.sauces,
       saucesType: "Томатный",
-      diameter: pizza.sizes,
+      sizes: pizza.sizes,
     };
   },
+
   methods: {
     extractImageName(url) {
-      let Result = [];
-      url.forEach((item) => {
-        let Image = item.image;
-        let Name = Image.split("/")[Image.split("/").length - 1].split(".")[0];
-        Result.push(Name);
+      return url.map((item) => {
+        let image = item.image;
+        return image.split("/")[image.split("/").length - 1].split(".")[0];
       });
-      return Result;
     },
   },
+
   computed: {
     ingridientsNames() {
       return this.extractImageName(this.ingridients);
     },
+
     doughNames() {
       return this.extractImageName(this.dough);
     },
-    doughClasses() {
-      let SafekeepingDough = "";
+
+    doughCssClass() {
+      let safeKeepingDough = "";
       switch (this.doughType) {
         case "Тонкое":
-          SafekeepingDough = "small";
+          safeKeepingDough = "small";
           break;
         case "Толстое":
-          SafekeepingDough = "big";
+          safeKeepingDough = "big";
           break;
       }
-      return SafekeepingDough;
+      return safeKeepingDough;
     },
-    saucesClasses() {
-      let SafekeepingSauce = "";
+
+    sauceCssClass() {
+      let safeKeepingSauce = "";
       switch (this.saucesType) {
         case "Томатный":
-          SafekeepingSauce = "tomato";
+          safeKeepingSauce = "tomato";
           break;
         case "Сливочный":
-          SafekeepingSauce = "creamy";
+          safeKeepingSauce = "creamy";
           break;
       }
-      return SafekeepingSauce;
+      return safeKeepingSauce;
     },
+
     sizesNames() {
-      let ArrSizes = [];
-      this.diameter.forEach((item) => {
+      return this.sizes.map((item) => {
         switch (item.id) {
           case 1:
-            ArrSizes.push("small");
-            break;
+            return "small";
           case 2:
-            ArrSizes.push("normal");
-            break;
+            return "normal";
           case 3:
-            ArrSizes.push("big");
-            break;
+            return "big";
         }
       });
-      return ArrSizes;
     },
   },
 };
