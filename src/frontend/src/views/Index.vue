@@ -36,14 +36,12 @@
                   :class="`dough__input--${doughNames[i].split('-')[1]}`"
                   :key="item.id"
                 >
-                  <input
-                    type="radio"
+                  <RadioButton
+                    v-model="doughType"
                     name="dought"
                     :value="item.name"
-                    class="visually-hidden"
-                    checked
-                    v-model="doughType"
-                  />
+                  >
+                  </RadioButton>
                   <b>{{ item.name }}</b>
                   <span>{{ item.description }}</span>
                 </label>
@@ -61,11 +59,10 @@
                   :class="`diameter__input--${sizesNames[i]}`"
                   :key="sizesNames[i]"
                 >
-                  <input
-                    type="radio"
+                  <RadioButton
+                    v-model="sizesType"
                     name="diameter"
                     :value="sizesNames[i]"
-                    class="visually-hidden"
                   />
                   <span>{{ size.name }}</span>
                 </label>
@@ -88,54 +85,29 @@
                     class="radio ingredients__input"
                     :key="sauce.id"
                   >
-                    <input
-                      type="radio"
+                    <RadioButton
+                      v-model="saucesType"
                       name="sauce"
                       :value="sauce.name"
-                      v-model="saucesType"
-                      checked
-                    />
+                    >
+                    </RadioButton>
                     <span>{{ sauce.name }}</span>
                   </label>
                 </div>
 
                 <div class="ingredients__filling">
                   <p>Начинка:</p>
-
                   <ul class="ingredients__list">
-                    <li
-                      v-for="(item, i) in ingridients"
+                    <BuilderIngredientsSelector
+                      v-for="(item, i) in ingredients"
                       class="ingredients__item"
                       :key="item.id"
+                      :ingredientName="item.name"
+                      :ingredientPrice="item.price"
+                      :ingredientNamesId="`filling--${ingredientsNames[i]}`"
+                      @selectedIngredientPrice="test"
                     >
-                      <span
-                        class="filling"
-                        :class="`filling--${ingridientsNames[i]}`"
-                      >
-                        {{ item.name }}
-                      </span>
-                      <div class="counter counter--orange ingredients__counter">
-                        <button
-                          type="button"
-                          class="counter__button counter__button--minus"
-                          disabled
-                        >
-                          <span class="visually-hidden">Меньше</span>
-                        </button>
-                        <input
-                          type="text"
-                          name="counter"
-                          class="counter__input"
-                          value="0"
-                        />
-                        <button
-                          type="button"
-                          class="counter__button counter__button--plus"
-                        >
-                          <span class="visually-hidden">Больше</span>
-                        </button>
-                      </div>
-                    </li>
+                    </BuilderIngredientsSelector>
                   </ul>
                 </div>
               </div>
@@ -153,20 +125,24 @@
             </label>
 
             <div class="content__constructor">
+              {{ ingredientsImages }}
               <div
                 class="pizza"
                 :class="`pizza--foundation--${doughCssClass}-${sauceCssClass}`"
               >
                 <div class="pizza__wrapper">
-                  <div class="pizza__filling pizza__filling--ananas"></div>
-                  <div class="pizza__filling pizza__filling--bacon"></div>
-                  <div class="pizza__filling pizza__filling--cheddar"></div>
+                  <div
+                    v-for="(picture, i) of ingredientsImages"
+                    :key="i"
+                    class="pizza__filling"
+                    :class="`pizza__filling--${picture}`"
+                  ></div>
                 </div>
               </div>
             </div>
-
             <div class="content__result">
-              <p>Итого: 0 ₽</p>
+              {{ ingredientsIdArr }}
+              <p>Итого: ₽</p>
               <button type="button" class="button" disabled>Готовьте!</button>
             </div>
           </div>
@@ -178,18 +154,31 @@
 
 <script>
 import pizza from "@/static/pizza.json";
+import RadioButton from "@/common/components/RadioButton";
+import BuilderIngredientsSelector from "@/modules/builder/BuilderIngredientsSelector";
 
 export default {
   name: "Index",
+  components: {
+    RadioButton,
+    BuilderIngredientsSelector,
+  },
+
   data() {
     return {
-      ingridients: pizza.ingredients,
+      ingredients: pizza.ingredients,
       dough: pizza.dough,
       pizzaImg: false,
       doughType: "Толстое",
-      sauces: pizza.sauces,
+      sizesType: "normal",
       saucesType: "Томатный",
+      sauces: pizza.sauces,
       sizes: pizza.sizes,
+      ingredientsIdArr: [],
+      ingredientsImages: [],
+      selectedIngredientPrice(ingredientPrice) {
+        return ingredientPrice;
+      },
     };
   },
 
@@ -200,11 +189,15 @@ export default {
         return image.split("/")[image.split("/").length - 1].split(".")[0];
       });
     },
+
+    test(price) {
+      console.log(this.selectedIngredientPrice(price));
+    },
   },
 
   computed: {
-    ingridientsNames() {
-      return this.extractImageName(this.ingridients);
+    ingredientsNames() {
+      return this.extractImageName(this.ingredients);
     },
 
     doughNames() {
@@ -254,7 +247,7 @@ export default {
 </script>
 
 <style>
-@import "~@/assets/scss/layout/main.scss";
-@import "~@/assets/scss/blocks/pizza.scss";
-@import "~@/assets/scss/blocks/user.scss";
+@import "../assets/scss/layout/main.scss";
+@import "../assets/scss/blocks/pizza.scss";
+@import "../assets/scss/blocks/user.scss";
 </style>
