@@ -3,7 +3,7 @@
     <SelectorItem
       class="filling"
       :dinamickClass="ingredientNamesId"
-      v-text="ingredientName"
+      v-text="item.name"
     ></SelectorItem>
     <ItemCounter @valueChanged="dataToNextComponent"></ItemCounter>
   </li>
@@ -21,18 +21,14 @@ export default {
   name: "BuilderIngredientsSelector",
 
   props: {
-    ingredientName: {
-      type: String,
+    item: {
+      type: Object,
       required: true,
     },
 
     ingredientNamesId: {
-      type: [String, Number],
+      type: [String],
       required: true,
-    },
-
-    ingredientPrice: {
-      type: Number,
     },
   },
 
@@ -47,14 +43,13 @@ export default {
       this.value = counterVal;
     },
 
-    selectedIngredientPrice() {
-      let price = this.value * this.ingredientPrice;
-      this.$emit("selectedIngredientPrice", price);
+    selectedIngredientAmount() {
+      this.$emit("selectedIngredientAmount", [this.value, this.item.id]);
     },
 
     dataToNextComponent(val) {
       this.valueChanged(val);
-      this.selectedIngredientPrice();
+      this.selectedIngredientAmount();
     },
   },
 };

@@ -102,10 +102,9 @@
                       v-for="(item, i) in ingredients"
                       class="ingredients__item"
                       :key="item.id"
-                      :ingredientName="item.name"
-                      :ingredientPrice="item.price"
+                      :item="item"
                       :ingredientNamesId="`filling--${ingredientsNames[i]}`"
-                      @selectedIngredientPrice="test"
+                      @selectedIngredientAmount="changingIngredients"
                     >
                     </BuilderIngredientsSelector>
                   </ul>
@@ -125,7 +124,6 @@
             </label>
 
             <div class="content__constructor">
-              {{ ingredientsImages }}
               <div
                 class="pizza"
                 :class="`pizza--foundation--${doughCssClass}-${sauceCssClass}`"
@@ -141,7 +139,7 @@
               </div>
             </div>
             <div class="content__result">
-              {{ ingredientsIdArr }}
+              {{ ingredientsImages }}
               <p>Итого: ₽</p>
               <button type="button" class="button" disabled>Готовьте!</button>
             </div>
@@ -168,30 +166,55 @@ export default {
     return {
       ingredients: pizza.ingredients,
       dough: pizza.dough,
-      pizzaImg: false,
       doughType: "Толстое",
       sizesType: "normal",
       saucesType: "Томатный",
       sauces: pizza.sauces,
       sizes: pizza.sizes,
-      ingredientsIdArr: [],
+      totalIngredientsPrise: [],
       ingredientsImages: [],
-      selectedIngredientPrice(ingredientPrice) {
-        return ingredientPrice;
+      selectedIngredientAmount(ingredientArr) {
+        return ingredientArr;
       },
     };
   },
 
   methods: {
+    changingIngredients(val) {
+      let ingredientData = this.selectedIngredientAmount(val);
+      let myIndex = this.ingredientsImages.indexOf(
+        this.ingredientsNames[ingredientData[1] - 1]
+      );
+      if (
+        !this.ingredientsImages.includes(
+          this.ingredientsNames[ingredientData[1] - 1]
+        )
+      ) {
+        this.ingredientsImages.push({
+          name: this.ingredientsNames[ingredientData[1] - 1],
+          price:
+            ingredientData[0] * this.ingredients[ingredientData[1] - 1].price,
+        });
+      }
+      if (myIndex !== -1 && ingredientData[0] < 1) {
+        this.ingredientsImages.splice(myIndex, 1);
+      }
+      console.log(ingredientData[0]);
+    },
+
+    // changedPrise(val) {
+    //   let ingredientData = this.selectedIngredientAmount(val);
+    //   let ingredientPrice =
+    //     this.ingredients[ingredientData[1] - 1].price * ingredientData[0];
+    //   this.totalIngredientsPrise.push(ingredientPrice);
+    //   console.log(ingredientPrice);
+    // },
+
     extractImageName(url) {
       return url.map((item) => {
         let image = item.image;
         return image.split("/")[image.split("/").length - 1].split(".")[0];
       });
-    },
-
-    test(price) {
-      console.log(this.selectedIngredientPrice(price));
     },
   },
 
