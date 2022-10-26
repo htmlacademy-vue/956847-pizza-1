@@ -17,6 +17,7 @@
       @input="$emit('valueChanged', $event.target.value)"
     />
     <button
+      ййй
       type="button"
       class="counter__button counter__button--plus"
       @click="$emit('addCounterVal')"
