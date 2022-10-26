@@ -1,15 +1,22 @@
 <template>
-  <li>
+  <li @dragstart="onDragstart">
     <SelectorItem
-      class="filling"
-      :dinamickClass="ingredientNamesId"
+      class="filling type-of-transfer"
+      :dinamickClass="`filling--${ingredientNamesId}`"
       v-text="item.name"
+      draggable="true"
     ></SelectorItem>
-    <ItemCounter @valueChanged="dataToNextComponent"></ItemCounter>
+    <ItemCounter
+      @valueChanged="selectedIngredientAmount"
+      @addCounterVal="addCounterVal"
+      @deductCounterVal="deductCounterVal"
+      v-model="counterVal"
+    ></ItemCounter>
   </li>
 </template>
 
 <script>
+import { EventBus } from "../../eventBus.js";
 import ItemCounter from "@/common/components/ItemCounter";
 import SelectorItem from "@/common/components/SelectorItem";
 
@@ -34,25 +41,46 @@ export default {
 
   data() {
     return {
-      value: 0,
+      counterVal: 0,
     };
   },
 
   methods: {
-    valueChanged(counterVal) {
-      this.value = counterVal;
+    addCounterVal() {
+      this.counterVal++;
+      this.selectedIngredientAmount();
+    },
+
+    deductCounterVal() {
+      this.counterVal--;
+      this.selectedIngredientAmount();
+    },
+
+    onDragstart() {
+      EventBus.$emit("onDragstart", [this.ingredientNamesId, this.item.price]);
     },
 
     selectedIngredientAmount() {
-      this.$emit("selectedIngredientAmount", [this.value, this.item.id]);
+      this.$emit("selectedIngredientAmount", [this.counterVal, this.item.id]);
     },
+  },
 
-    dataToNextComponent(val) {
-      this.valueChanged(val);
-      this.selectedIngredientAmount();
-    },
+  created() {
+    EventBus.$on("dropOn", (data) => {
+      if (data[0] === this.ingredientNamesId) {
+        this.addCounterVal();
+      }
+    });
   },
 };
 </script>
 
-<style scoped></style>
+<style lang="scss" scoped>
+.type-of-transfer {
+  cursor: grab;
+
+  &:active {
+    cursor: grabbing;
+  }
+}
+</style>

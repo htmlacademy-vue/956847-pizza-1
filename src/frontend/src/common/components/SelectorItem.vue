@@ -10,7 +10,6 @@ export default {
     dinamickClass: {
       type: [String],
       default: "",
-      required: true,
     },
   },
 };

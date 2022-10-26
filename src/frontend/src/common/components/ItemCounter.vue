@@ -4,7 +4,7 @@
       type="button"
       class="counter__button counter__button--minus"
       :disabled="counterVal < 1"
-      @click="valueDeduct"
+      @click="$emit('deductCounterVal')"
     >
       <span class="visually-hidden">Меньше</span>
     </button>
@@ -13,13 +13,13 @@
       type="number"
       name="counter"
       class="counter__input"
-      v-model="counterVal"
-      @input="valueChanged"
+      :value="counterVal"
+      @input="$emit('valueChanged', $event.target.value)"
     />
     <button
       type="button"
       class="counter__button counter__button--plus"
-      @click="valueAdd"
+      @click="$emit('addCounterVal')"
     >
       <span class="visually-hidden">Больше</span>
     </button>
@@ -30,25 +30,15 @@
 export default {
   name: "ItemCounter",
 
-  data() {
-    return {
-      counterVal: 0,
-    };
+  model: {
+    prop: "counterVal",
+    event: "valueChanged",
   },
 
-  methods: {
-    valueAdd() {
-      this.counterVal++;
-      this.valueChanged();
-    },
-
-    valueDeduct() {
-      this.counterVal--;
-      this.valueChanged();
-    },
-
-    valueChanged() {
-      this.$emit("valueChanged", this.counterVal);
+  props: {
+    counterVal: {
+      type: [String, Number],
+      required: true,
     },
   },
 };
