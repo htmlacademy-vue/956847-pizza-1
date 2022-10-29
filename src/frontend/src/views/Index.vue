@@ -2,7 +2,6 @@
   <form action="#" method="post">
     <div class="content__wrapper">
       <h1 class="title title--big">Конструктор пиццы</h1>
-<!--1-->
       <div class="content__dough">
         <div class="sheet">
           <h2 class="title title--small sheet__title">Выберите тесто</h2>
